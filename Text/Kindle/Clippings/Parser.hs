@@ -1,7 +1,6 @@
 module Text.Kindle.Clippings.Parser where
 
 import Text.Kindle.Clippings.Types
-import Prelude hiding (until)
 import Text.Parsec
 import Text.Parsec.String
 import Data.Char (isSpace)
@@ -13,9 +12,6 @@ eol = skipMany $ oneOf "\n\r"
 eor :: Parser String
 eor = string "=========="
 
-until :: String -> Parser String
-until e = many $ noneOf e
-
 chomp :: String -> String
 chomp = reverse . dropWhile isSpace . reverse . dropWhile isSpace  --lol
 
@@ -24,20 +20,16 @@ readTitle = do
   title <- many $ noneOf "(\n\r"
   return $ chomp title
 
-inBrackets :: Parser String
-inBrackets = do
-  char '('
-  author <- many $ noneOf ")"
-  char ')'
-  return author
-
 readAuthor :: Parser (Maybe String)
-readAuthor = optionMaybe $ try $ inBrackets
+readAuthor = optionMaybe $ try $ do
+  char '('
+  restOfLine <- many $ noneOf "\n\r"
+  return $ init restOfLine
 
 readContentType :: Parser String
 readContentType = do
   string "- "
-  contentType <- until " "
+  contentType <- many $ noneOf " "
   string " "
   return contentType
 
@@ -52,7 +44,7 @@ readLocation :: Parser (Maybe Location)
 readLocation = optionMaybe $ try $ do
   string "Loc. "
   location <- readLocation'
-  until "|"
+  many $ noneOf "|"
   string "| "
   return location
 
@@ -82,7 +74,7 @@ pad (s0,s1) = (s0,pr++s1)
 readDate :: Parser LocalTime
 readDate = do
   string "Added on "
-  date <- until "\n\r"
+  date <- many $ noneOf "\n\r"
   return $ parseDate date
 
 readContent :: Parser String

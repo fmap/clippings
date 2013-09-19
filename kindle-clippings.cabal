@@ -1,5 +1,5 @@
 name:                kindle-clippings
-version:             0.0.1
+version:             0.0.2
 synopsis:            Parser for Kindle's `My Clippings.txt`
 author:              Vikram Verma <me@vikramverma.com>
 maintainer:          Vikram Verma <me@vikramverma.com>

@@ -1,10 +1,11 @@
-module Text.Kindle.Clippings.Parser where
+module Text.Kindle.Clippings.Reader where
 
-import Text.Kindle.Clippings.Types
 import Text.Parsec
 import Text.Parsec.String
 import Data.Char (isSpace)
 import Data.Time.LocalTime (LocalTime)
+import Text.Kindle.Clippings.Types 
+import Text.Kindle.Clippings.Writer (emptyClipping, parseDate)
 
 eol :: Parser ()
 eol = skipMany $ oneOf "\n\r"

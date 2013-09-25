@@ -1,6 +1,6 @@
 name:                kindle-clippings
-version:             0.0.2
-synopsis:            Parser for Kindle's `My Clippings.txt`
+version:             0.1.0
+synopsis:            Interface with Kindle clippings files.
 author:              Vikram Verma <me@vikramverma.com>
 maintainer:          Vikram Verma <me@vikramverma.com>
 category:            Text
@@ -8,7 +8,7 @@ build-type:          Simple
 cabal-version:       >=1.8
 
 library
-  exposed-modules: Text.Kindle.Clippings Text.Kindle.Clippings.Parser Text.Kindle.Clippings.Types
+  exposed-modules: Text.Kindle.Clippings Text.Kindle.Clippings.Reader Text.Kindle.Clippings.Writer Text.Kindle.Clippings.Types
   build-depends:        
     base ==4.6.*,
     time,

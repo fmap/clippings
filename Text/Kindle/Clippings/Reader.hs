@@ -85,7 +85,7 @@ readContent = do
   content <- manyTill anyToken $ try $ string "=========="
   return $ chomp content
 
-readClipping :: Parser Clipping
+readClipping :: Parser (Maybe Clipping)
 readClipping = do
   title  <- readTitle
   author <- readAuthor
@@ -99,13 +99,13 @@ readClipping = do
   eol
   return $ clipping typ (Document title author) (Position page loc) date content
 
-clipping :: String -> Document -> Position -> LocalTime -> String -> Clipping
+clipping :: String -> Document -> Position -> LocalTime -> String -> Maybe Clipping
 clipping t d p l c
-  |(==) t "Highlight" = Clipping d p l $ Highlight c
-  |(==) t "Note"      = Clipping d p l $ Annotation c
-  |(==) t "Bookmark"  = Clipping d p l Bookmark
-  | otherwise = emptyClipping -- *something went wrong*
+  |(==) t "Highlight" = Just $ Clipping d p l $ Highlight c
+  |(==) t "Note"      = Just $ Clipping d p l $ Annotation c
+  |(==) t "Bookmark"  = Just $ Clipping d p l Bookmark
+  | otherwise = Nothing
 
-readClippings :: Parser [Clipping]
+readClippings :: Parser [Maybe Clipping]
 readClippings = do
   many1 readClipping

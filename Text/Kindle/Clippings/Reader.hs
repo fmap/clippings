@@ -14,7 +14,9 @@ eor :: Parser String
 eor = string "=========="
 
 chomp :: String -> String
-chomp = reverse . dropWhile isSpace . reverse . dropWhile isSpace  --lol
+chomp = rstrip . lstrip
+  where lstrip = dropWhile isSpace
+        rstrip = reverse . lstrip . reverse
 
 readTitle :: Parser String
 readTitle = do

@@ -1,6 +1,6 @@
 name:                kindle-clippings
 version:             0.1.0
-synopsis:            Interface with Kindle clippings files.
+synopsis:            A parser for Kindle-format clipping files.
 author:              Vikram Verma <me@vikramverma.com>
 maintainer:          Vikram Verma <me@vikramverma.com>
 category:            Text

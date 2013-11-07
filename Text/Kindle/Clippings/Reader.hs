@@ -1,11 +1,12 @@
 module Text.Kindle.Clippings.Reader where
 
-import Text.Parsec
+import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.String
 import Data.Char (isSpace)
 import Data.Time.LocalTime (LocalTime)
 import Text.Kindle.Clippings.Types 
 import Text.Kindle.Clippings.Writer (emptyClipping, parseDate)
+import Control.Applicative 
 
 eol :: Parser ()
 eol = skipMany $ oneOf "\n\r"
@@ -18,72 +19,50 @@ chomp = rstrip . lstrip
   where lstrip = dropWhile isSpace
         rstrip = reverse . lstrip . reverse
 
+but :: String -> Parser String
+but = many . noneOf
+
 readTitle :: Parser String
-readTitle = do
-  title <- many $ noneOf "(\n\r"
-  return $ chomp title
+readTitle = chomp <$> but "(\n\r"
+
+tryMaybe :: Parser a -> Parser (Maybe a)
+tryMaybe = optionMaybe . try
 
 readAuthor :: Parser (Maybe String)
-readAuthor = optionMaybe $ try $ do
-  char '('
-  restOfLine <- many $ noneOf "\n\r"
-  return $ init restOfLine
+readAuthor = tryMaybe <$> fmap init $ char '(' *> but "\n\r"
 
 readContentType :: Parser String
-readContentType = do
-  string "- "
-  contentType <- many $ noneOf " "
-  string " "
-  return contentType
+readContentType = string "- " *> but " " <* string " "
 
 readPageNumber :: Parser (Maybe Int)
-readPageNumber = optionMaybe $ try $ do
-  string "on Page "
-  number <- many1 alphaNum --roman numerals lol
-  string " | "
-  return $ read number
+readPageNumber = tryMaybe <$> fmap read $ string "on Page " *> many1 alphaNum <* string " | "
 
 readLocation :: Parser (Maybe Location)
-readLocation = optionMaybe $ try $ do
-  string "Loc. "
-  location <- readLocation'
-  many $ noneOf "|"
-  string "| "
-  return location
+readLocation = tryMaybe $ string "Loc. " *> readLocation' <* but "|" <* string "| "
 
 readLocation' :: Parser Location
 readLocation' = (try readLocationRegion) <|> readLocationInt
 
 readLocationInt :: Parser Location
-readLocationInt = do
-  s0 <- many1 digit
-  return $ Location (read s0 ::Int)
+readLocationInt = Location . read <$> many1 digit
 
 readLocationRegion :: Parser Location
-readLocationRegion = do
-  s0 <- many1 digit 
-  char '-'
-  s1 <- many1 digit
-  return $ parseRegion (s0,s1)
+readLocationRegion = toLocation <$> many1 digit <*> (char '-' *> many1 digit)
+  where toLocation = (parseRegion .) . (,)
 
 parseRegion :: (String, String) -> Location
-parseRegion (s0,s1) = Region $ readTuple $ pad (s0,s1)
+parseRegion (s0,s1) = Region . readTuple $ pad (s0,s1)
   where readTuple (s2,s3) = (read s2, read s3) 
 
 pad :: (String,String) -> (String,String)
-pad (s0,s1) = (s0,pr++s1)
+pad (s0,s1) = (s0, pr++s1)
   where pr = take (length s0 - length s1) s0
 
 readDate :: Parser LocalTime
-readDate = do
-  string "Added on "
-  date <- many $ noneOf "\n\r"
-  return $ parseDate date
+readDate = fmap parseDate $ string "Added on" *> but "\n\r"
 
 readContent :: Parser String
-readContent = do
-  content <- manyTill anyToken $ try $ string "=========="
-  return $ chomp content
+readContent = fmap chomp $ manyTill anyToken . try $ string "=========="
 
 readClipping :: Parser (Maybe Clipping)
 readClipping = do
@@ -107,5 +86,4 @@ clipping t d p l c
   | otherwise = Nothing
 
 readClippings :: Parser [Maybe Clipping]
-readClippings = do
-  many1 readClipping
+readClippings = many1 readClipping

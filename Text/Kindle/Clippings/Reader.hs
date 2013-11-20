@@ -28,14 +28,17 @@ readTitle = chomp <$> but "(\n\r"
 tryMaybe :: Parser a -> Parser (Maybe a)
 tryMaybe = optionMaybe . try
 
+($:) :: Functor f => (f a -> b) -> (c -> a) -> f c -> b
+f0 $: f1 = fmap f0 (fmap f1)
+
 readAuthor :: Parser (Maybe String)
-readAuthor = tryMaybe <$> fmap init $ char '(' *> but "\n\r"
+readAuthor = tryMaybe $: init $ char '(' *> but "\n\r"
 
 readContentType :: Parser String
 readContentType = string "- " *> but " " <* string " "
 
 readPageNumber :: Parser (Maybe Int)
-readPageNumber = tryMaybe <$> fmap read $ string "on Page " *> many1 alphaNum <* string " | "
+readPageNumber = tryMaybe $: read $ string "on Page " *> many1 alphaNum <* string " | "
 
 readLocation :: Parser (Maybe Location)
 readLocation = tryMaybe $ string "Loc. " *> readLocation' <* but "|" <* string "| "
@@ -46,9 +49,12 @@ readLocation' = (try readLocationRegion) <|> readLocationInt
 readLocationInt :: Parser Location
 readLocationInt = Location . read <$> many1 digit
 
+(.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
+(.:) = (.) . (.)
+
 readLocationRegion :: Parser Location
 readLocationRegion = toLocation <$> many1 digit <*> (char '-' *> many1 digit)
-  where toLocation = (parseRegion .) . (,)
+  where toLocation = parseRegion .: (,)
 
 parseRegion :: (String, String) -> Location
 parseRegion (s0,s1) = Region . readTuple $ pad (s0,s1)
@@ -62,7 +68,7 @@ readDate :: Parser LocalTime
 readDate = fmap parseDate $ string "Added on" *> but "\n\r"
 
 readContent :: Parser String
-readContent = fmap chomp $ manyTill anyToken . try $ string "=========="
+readContent = chomp <$> (manyTill anyToken . try $ string "==========")
 
 readClipping :: Parser (Maybe Clipping)
 readClipping = do

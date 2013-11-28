@@ -49,8 +49,8 @@ readLocation' = (try readLocationRegion) <|> readLocationInt
 readLocationInt :: Parser Location
 readLocationInt = Location . read <$> many1 digit
 
-(.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
-(.:) = (.) . (.)
+(.:) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(.:) = fmap fmap fmap
 
 readLocationRegion :: Parser Location
 readLocationRegion = toLocation <$> many1 digit <*> (char '-' *> many1 digit)

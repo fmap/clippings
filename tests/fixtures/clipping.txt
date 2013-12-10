@@ -1,0 +1,5 @@
+Haskell Monoids and their Uses (sigfpe)
+- Highlight Loc. 3-4  | Added on Monday, 10 June 13 06:58:17 GMT+08:00
+
+Haskell is a great language for constructing code modularly from small but orthogonal building blocks. 
+==========

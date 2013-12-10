@@ -1,6 +1,6 @@
 default: build
 
-setup: kindle-clippings.cabal
+setup: kindle-clippings.cabal Text
 	ghc Setup.hs
 
 build: setup 
@@ -13,7 +13,7 @@ install: build
 tests: install
 	ghc tests/*.hs
 
-test: 
+test: tests
 	./tests/Reader
 
 clean: setup

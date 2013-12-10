@@ -1,5 +1,3 @@
-{-# LANGUAGE StandaloneDeriving #-}
-
 import Data.Monoid
 import Control.Applicative 
 import System.FilePath (splitFileName)
@@ -12,23 +10,6 @@ import Data.Maybe (fromMaybe)
 import Data.Time.LocalTime
 import Data.Time.Calendar
 import System.Console.ANSI 
-
-deriving instance Eq Clipping
-
-deriving instance Eq Document
-
-instance Eq Location where
-  Location a == Location b = a==b
-  Region a   == Region b = a==b
-  _ ==  _ = False
-
-deriving instance Eq Position
-
-instance Eq Content where 
-  Bookmark      == Bookmark       =  True
-  Highlight s0  == Highlight s1   =  s0 == s1
-  Annotation s0 == Annotation s1  =  s0 == s1
-  _ == _                          =  False
 
 class Default a where
   unit :: a

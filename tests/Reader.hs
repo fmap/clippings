@@ -35,7 +35,7 @@ inFixture = Clipping
   }
 
 assert :: String -> Bool -> IO ()
-assert str prop = setSGR [SetColor Foreground Vivid col] >> putStrLn str >> setSGR []
+assert str prop = setSGR [SetColor Foreground Dull col] >> putStrLn str >> setSGR []
   where col = if prop then Green else Red
   
 main :: IO () 

@@ -65,10 +65,12 @@ pad (s0,s1) = (s0, pr++s1)
   where pr = take (length s0 - length s1) s0
 
 readDate :: Parser LocalTime
-readDate = fmap parseDate $ string "Added on" *> but "\n\r"
+readDate = fmap parseDate $ string "Added on " *> but "\n\r"
 
 readContent :: Parser String
-readContent = chomp <$> (manyTill anyToken . try $ string "==========")
+readContent = do
+  content <- manyTill anyToken $ try $ string "=========="
+  return $ chomp content
 
 readClipping :: Parser (Maybe Clipping)
 readClipping = do

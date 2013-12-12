@@ -15,4 +15,5 @@ library
     parsec,
     old-locale,
     strptime,
-    ansi-terminal
+    ansi-terminal,
+    data-default

@@ -1,20 +1,12 @@
 module Text.Kindle.Clippings.Writer 
 ( showClipping
 , showClippings
-, emptyClipping
-, parseDate
 ) where
 
 import Data.Time.LocalTime (LocalTime)
-import Data.Time.Parse (strptime)
 import Data.Time.Format (formatTime, readTime)
-import Data.Maybe (fromMaybe)
 import System.Locale (defaultTimeLocale)
 import Text.Kindle.Clippings.Types
-
-parseDate :: String -> LocalTime
-parseDate = fst . fromMaybe (epoch,"") . strptime "%A, %d %B %y %X"
-  where epoch = readTime defaultTimeLocale "%s" "0" :: LocalTime
 
 instance Show Document where
   show (Document title (Just author)) = title ++ " (" ++ author ++ ")"
@@ -57,12 +49,6 @@ showClipping c = unlines $
 
 instance Show Clipping where
   show = showClipping
-
-emptyClipping :: Clipping
-emptyClipping = Clipping emptyDocument emptyPosition emptyLocalTime Bookmark
-  where emptyDocument  = Document [] Nothing
-        emptyPosition  = Position Nothing Nothing
-        emptyLocalTime = parseDate []
 
 showClippings :: [Clipping] -> String
 showClippings = concat . map showClipping

@@ -6,7 +6,9 @@ module Text.Kindle.Clippings.Types
 , Content  (..)
 ) where
 
-import Data.Time.LocalTime (LocalTime)
+import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
+import Data.Time.Calendar (fromGregorian)
+import Data.Default
 
 data Clipping = Clipping
   { document :: Document
@@ -39,3 +41,18 @@ instance Eq Content where
   Highlight s0  == Highlight s1   =  s0 == s1
   Annotation s0 == Annotation s1  =  s0 == s1
   _ == _                          =  False
+
+instance Default Document where
+  def = Document [] Nothing
+
+instance Default Position where
+  def = Position Nothing Nothing
+
+instance Default LocalTime where
+  def = LocalTime (fromGregorian 1970 1 1) (TimeOfDay 0 0 0)
+
+instance Default Content where
+  def = Bookmark
+
+instance Default Clipping where
+  def = Clipping def def def def

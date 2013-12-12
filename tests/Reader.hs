@@ -1,24 +1,18 @@
-import Data.Monoid
-import Control.Applicative 
+import Data.Monoid ((<>))
+import Control.Applicative  ((<$>))
 import System.FilePath (splitFileName)
 import System.Environment (getExecutablePath)
 import Text.Kindle.Clippings.Types
-import Text.Kindle.Clippings.Reader
-import Text.Kindle.Clippings.Writer
+import Text.Kindle.Clippings.Reader (readClipping)
 import Text.Parsec (parse)
 import Data.Maybe (fromMaybe)
-import Data.Time.LocalTime
-import Data.Time.Calendar
+import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
+import Data.Time.Calendar (fromGregorian)
 import System.Console.ANSI 
-
-class Default a where
-  unit :: a
-
-instance Default Clipping where
-  unit = emptyClipping
+import Data.Default
 
 fromMaybeEither :: Default b => Either a (Maybe b) -> b
-fromMaybeEither = fromMaybe unit .$  either (Just . const unit) id
+fromMaybeEither = fromMaybe def .$  either (Just . const def) id
   
 (.$) :: (b -> c) -> (a -> b) -> a -> c
 (.$) = ((.) $)

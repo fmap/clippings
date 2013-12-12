@@ -1,6 +1,7 @@
 name:                kindle-clippings
 version:             0.1.1
-synopsis:            A parser for Kindle-format clipping files.
+license-file:        LICENSE
+synopsis:            A parser/generator for Kindle-format clipping files (`My Clippings.txt`),
 author:              Vikram Verma <me@vikramverma.com>
 maintainer:          Vikram Verma <me@vikramverma.com>
 category:            Text

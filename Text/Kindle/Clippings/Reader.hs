@@ -5,12 +5,11 @@ import Text.Parsec.String
 import Data.Char (isSpace)
 import Data.Time.LocalTime (LocalTime)
 import Text.Kindle.Clippings.Types 
+import Data.Default
 import Control.Applicative 
 import Data.Time.LocalTime (LocalTime)
 import Data.Time.Parse (strptime)
-import Data.Time.Format (formatTime, readTime)
 import Data.Maybe (fromMaybe)
-import System.Locale (defaultTimeLocale)
 
 eol :: Parser ()
 eol = skipMany $ oneOf "\n\r"
@@ -69,8 +68,7 @@ pad (s0,s1) = (s0, pr++s1)
   where pr = take (length s0 - length s1) s0
 
 parseDate :: String -> LocalTime
-parseDate = fst . fromMaybe (epoch,[]) . strptime "%A, %d %B %y %X"
-  where epoch = readTime defaultTimeLocale "%s" "0" :: LocalTime
+parseDate = fromMaybe def . fmap fst . strptime "%A, %d %B %y %X"
 
 readDate :: Parser LocalTime
 readDate = fmap parseDate $ string "Added on " *> but "\n\r"

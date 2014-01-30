@@ -17,4 +17,5 @@ library
     old-locale,
     strptime,
     ansi-terminal,
-    data-default
+    data-default,
+    assert

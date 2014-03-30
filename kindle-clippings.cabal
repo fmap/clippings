@@ -11,7 +11,7 @@ cabal-version:       >=1.8
 library
   exposed-modules: Text.Kindle.Clippings Text.Kindle.Clippings.Reader Text.Kindle.Clippings.Writer Text.Kindle.Clippings.Types
   build-depends:        
-    base ==4.6.*,
+    base,
     time,
     parsec,
     old-locale,
@@ -19,3 +19,12 @@ library
     ansi-terminal,
     data-default,
     assert
+
+executable clippings2tsv
+  main-is: Main.hs
+  hs-source-dirs: examples/clippings2tsv
+  build-depends: base, 
+                 kindle-clippings, 
+                 cassava, 
+                 parsec, 
+                 bytestring

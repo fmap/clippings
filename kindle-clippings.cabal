@@ -11,6 +11,7 @@ cabal-version:       >=1.10
 
 library
   exposed-modules: Text.Kindle.Clippings Text.Kindle.Clippings.Reader Text.Kindle.Clippings.Writer Text.Kindle.Clippings.Types
+  hs-source-dirs: src
   build-depends:        
     base,
     time,

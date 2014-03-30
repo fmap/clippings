@@ -10,6 +10,7 @@ import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (fromGregorian)
 import Test.Assert (runAssertions)
 import Data.Default
+import Paths_kindle_clippings (getDataFileName)
 
 fromMaybeEither :: Default b => Either a (Maybe b) -> b
 fromMaybeEither = fromMaybe def .$  either (Just . const def) id
@@ -27,10 +28,15 @@ inFixture = Clipping
   , position = Position Nothing . Just $ Region (3,4)
   , content  = Highlight "Haskell is a great language for constructing code modularly from small but orthogonal building blocks."
   }
+
+getTitle :: Clipping -> String
+getTitle = title . document
   
 main :: IO () 
 main = do
-  directory <- fst . splitFileName <$> getExecutablePath
-  clipping  <- readFile $ directory <> "fixtures/clipping.txt"
+  clipping  <- readFile =<< getDataFileName "tests/fixtures/clipping.txt"
+  brackets  <- readFile =<< getDataFileName "tests/fixtures/brackets.txt"
   runAssertions $ 
-    [("Fixture should parse to sigfpe clipping.", getClipping clipping == inFixture)]
+    [ ("Fixture should parse to sigfpe clipping.", getClipping clipping == inFixture)
+    , ("Brackets in clippings' titles should be preserved." , getTitle (getClipping brackets) == "An Introduction to Statistical Learning: with Applications in R (Springer Texts in Statistics)")
+    ]

@@ -1,0 +1,5 @@
+An Introduction to Statistical Learning: with Applications in R (Springer Texts in Statistics) (Gareth James, Daniela Witten, Trevor Hastie and Robert Tibshirani)
+- Highlight Loc. 1109-12  | Added on Tuesday, 25 February 14 01:17:01 GMT+07:54
+
+There is no free lunch in statistics: no one method dominates all others over all possible data sets. On a particular data set, one specific method may work best, but some other method may work better on a similar but different data set. Hence it is an important task to decide for any given set of data which method produces the best results. Selecting the best approach can be one of the most challenging parts of performing statistical learning in practice. 
+==========

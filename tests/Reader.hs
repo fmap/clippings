@@ -10,7 +10,7 @@ import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (fromGregorian)
 import Test.Assert (runAssertions)
 import Data.Default
-import Paths_kindle_clippings (getDataFileName)
+import Paths_clippings (getDataFileName)
 
 fromMaybeEither :: Default b => Either a (Maybe b) -> b
 fromMaybeEither = fromMaybe def .$  either (Just . const def) id

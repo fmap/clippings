@@ -2,6 +2,7 @@ module Text.Kindle.Clippings.Reader where
 
 import Text.Parsec hiding ((<|>), many)
 import Text.Parsec.String
+import Text.Parsec.Combinator (between)
 import Data.Char (isSpace)
 import Data.Time.LocalTime (LocalTime)
 import Text.Kindle.Clippings.Types 
@@ -25,8 +26,15 @@ chomp = rstrip . lstrip
 but :: String -> Parser String
 but = many . noneOf
 
+tryBut1 :: String -> Parser String
+tryBut1 = try . many1 . noneOf
+
 readTitle :: Parser String
-readTitle = chomp <$> but "(\n\r"
+readTitle = chomp . concat <$> many1 (tryBut1 "(\r\n)" <|> try brackets)
+  where brackets = (\a b c -> a:b++c) <$> char '(' <*> but ")" <*> string ") "
+
+--readTitle :: Parser String
+--readTitle = chomp <$> but "(\n\r"
 
 tryMaybe :: Parser a -> Parser (Maybe a)
 tryMaybe = optionMaybe . try

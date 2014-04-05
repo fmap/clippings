@@ -22,7 +22,7 @@ instance ToCard Clipping where
   toCard c@Clipping{..} 
     | not (isHighlight c) = Nothing
     | otherwise = Just $ uncurry Card (show content, author')
-    where author' = fromMaybe mempty $ (" - " <>) <$> author document
+    where author' = fromMaybe "[clippings2tsv]" $ (" - " <>) <$> author document
 
 isHighlight :: Clipping -> Bool
 isHighlight Clipping{..} = case content of

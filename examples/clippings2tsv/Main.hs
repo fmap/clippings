@@ -10,6 +10,7 @@ import Data.ByteString.Lazy.Char8 (putStr)
 import Data.Card (Card(..), ToCard(..))
 import Data.Csv.Extras (encodeTabDelimited) 
 import Data.Either.Extras (bimapEither)
+import Data.List.Extras (substitute)
 import Data.Maybe (fromMaybe, catMaybes)
 import Data.Monoid ((<>), Monoid (mempty))
 import System.Environment (getArgs)
@@ -21,7 +22,7 @@ import Text.Parsec (parse)
 instance ToCard Clipping where
   toCard c@Clipping{..} 
     | not (isHighlight c) = Nothing
-    | otherwise = Just $ uncurry Card (show content, author')
+    | otherwise = Just $ Card (substitute '\n' ' ' $ show content) author'
     where author' = fromMaybe "[clippings2tsv]" $ (" - " <>) <$> author document
 
 isHighlight :: Clipping -> Bool

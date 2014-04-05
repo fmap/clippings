@@ -29,8 +29,9 @@ tryBut1 :: String -> Parser String
 tryBut1 = try . many1 . noneOf
 
 readTitle :: Parser String
-readTitle = chomp . concat <$> many1 (tryBut1 "(\r\n)" <|> try brackets)
-  where brackets = (\a b c -> a:b++c) <$> char '(' <*> but "()" <*> string ") "
+readTitle = chomp . concat <$> textAndBrackets
+  where brackets = (\a b c -> a:(concat b)++c) <$> char '(' <*> textAndBrackets <*> string ") "
+        textAndBrackets = many1 (tryBut1 "(\r\n)" <|> try brackets)
 
 tryMaybe :: Parser a -> Parser (Maybe a)
 tryMaybe = optionMaybe . try

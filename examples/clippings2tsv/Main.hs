@@ -22,8 +22,10 @@ import Text.Parsec (parse)
 instance ToCard Clipping where
   toCard c@Clipping{..} 
     | not (isHighlight c) = Nothing
-    | otherwise = Just $ Card (substitute '\n' ' ' $ show content) author'
-    where author' = fromMaybe "[clippings2tsv]" $ (" - " <>) <$> author document
+    | null (show content) = Nothing
+    | otherwise = Just $ Card content' author'
+    where author'  = fromMaybe "[clippings2tsv]" $ (" - " <>) <$> author document
+          content' = substitute '\n' ' ' $ show content
 
 isHighlight :: Clipping -> Bool
 isHighlight Clipping{..} = case content of

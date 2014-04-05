@@ -4,7 +4,7 @@ license-file:        LICENSE
 synopsis:            A parser/generator for Kindle-format clipping files (`My Clippings.txt`),
 author:              Vikram Verma <me@vikramverma.com>
 maintainer:          Vikram Verma <me@vikramverma.com>
-data-files:          tests/fixtures/brackets.txt, tests/fixtures/clipping.txt
+data-files:          tests/fixtures/brackets.txt, tests/fixtures/clipping.txt, tests/fixtures/nested_brackets.txt
 category:            Text
 build-type:          Simple
 cabal-version:       >=1.10
@@ -46,5 +46,6 @@ executable clippings2tsv
                  cassava, 
                  parsec, 
                  bytestring,
-                 assert
+                 assert,
+                 safecopy
   default-language: Haskell2010

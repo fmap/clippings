@@ -31,12 +31,17 @@ inFixture = Clipping
 
 getTitle :: Clipping -> String
 getTitle = title . document
+
+getAuthor :: Clipping -> Maybe String
+getAuthor = author . document
   
 main :: IO () 
 main = do
   clipping  <- readFile =<< getDataFileName "tests/fixtures/clipping.txt"
   brackets  <- readFile =<< getDataFileName "tests/fixtures/brackets.txt"
+  nested    <- readFile =<< getDataFileName "tests/fixtures/nested_brackets.txt"
   runAssertions $ 
     [ ("Fixture should parse to sigfpe clipping.", getClipping clipping == inFixture)
     , ("Brackets in clippings' titles should be preserved." , getTitle (getClipping brackets) == "An Introduction to Statistical Learning: with Applications in R (Springer Texts in Statistics)")
+    , ("Nested brackets in clippings' authors should be preserved.", getAuthor (getClipping nested) == Just "G. K. (Gilbert Keith) Chesterton")
     ]

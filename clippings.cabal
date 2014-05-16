@@ -1,6 +1,7 @@
 name:                clippings
 version:             0.1.1
 license-file:        LICENSE
+license:             MIT
 synopsis:            A parser/generator for Kindle-format clipping files (`My Clippings.txt`),
 author:              Vikram Verma <me@vikramverma.com>
 maintainer:          Vikram Verma <me@vikramverma.com>
@@ -27,7 +28,7 @@ test-suite wright-tests
   type:             exitcode-stdio-1.0
   main-is:          Reader.hs
   hs-source-dirs:   tests
-  build-depends:    base,
+  build-depends:    base == 4.*,
                     clippings,
                     data-default,
                     parsec,
@@ -41,7 +42,7 @@ test-suite wright-tests
 executable clippings2tsv
   main-is: Main.hs
   hs-source-dirs: examples/clippings2tsv
-  build-depends: base, 
+  build-depends: base == 4.*, 
                  clippings, 
                  cassava, 
                  parsec, 

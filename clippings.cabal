@@ -33,7 +33,7 @@ test-suite wright-tests
                     parsec,
                     time,
                     old-locale,
-                    assert,
+                    assertions,
                     filepath
   other-modules: Paths_clippings
   default-language: Haskell2010
@@ -46,6 +46,5 @@ executable clippings2tsv
                  cassava, 
                  parsec, 
                  bytestring,
-                 assert,
                  safecopy
   default-language: Haskell2010

@@ -19,9 +19,7 @@ library
     parsec,
     old-locale,
     strptime,
-    ansi-terminal,
-    data-default,
-    assert
+    data-default
   default-language: Haskell2010
 
 test-suite wright-tests

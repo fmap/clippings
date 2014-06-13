@@ -72,7 +72,13 @@ pad (s0,s1) = (s0, pr++s1)
   where pr = take (length s0 - length s1) s0
 
 parseDate :: String -> LocalTime
-parseDate = fromMaybe def . fmap fst . strptime "%A, %d %B %y %X"
+parseDate = fst . fromJust . fromJust {-[^1]-} . find isJust . flip map formats . flip strptime
+  where formats =
+          [ "%A, %d %B %y %X"
+          , "%A, %B %d, %Y %r"
+          , ""
+          ]
+-- [^1]: This is safe: `strptime x ""` is `Just` for all `x`.
 
 readDate :: Parser LocalTime
 readDate = fmap parseDate $ string "Added on " *> but "\n\r"

@@ -42,16 +42,18 @@ readAuthor :: Parser (Maybe String)
 readAuthor = tryMaybe $: init $ char '(' *> but "\n\r"
 
 readContentType :: Parser String
-readContentType = string "- " *> but " " <* string " "
+readContentType = (try (string "- Your ") <|> string "- ")
+               *> but " "
+               <* (try (string " on ") <|> many1 (char ' '))
 
 readPageNumber :: Parser (Maybe Int)
-readPageNumber = tryMaybe $: read $ string "on Page " *> many1 alphaNum <* string " | "
+readPageNumber = tryMaybe $: read $ string "Page " *> many1 alphaNum <* string " | "
 
 readLocation :: Parser (Maybe Location)
 readLocation = tryMaybe 
              $ (try (string "Loc. ") <|> string "Location ")
             *> (try readLocationRegion <|> readLocationInt)
-            <* but "|" <* string "| "
+            <* but "|" <* char '|' <* many1 (char ' ')
 
 readLocationInt :: Parser Location
 readLocationInt = Location . read <$> many1 digit

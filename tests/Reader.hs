@@ -7,6 +7,7 @@ import Paths_clippings (getDataFileName)
 import Test.Assert (runAssertions)
 import Text.Kindle.Clippings.Reader (readClipping)
 import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
+import Text.Kindle.Clippings.Writer ()
 import Text.Parsec (parse)
 
 fromMaybeEither :: Default b => Either a (Maybe b) -> b
@@ -28,7 +29,7 @@ inFixture = Clipping
 
 inPw2Fixture :: Clipping
 inPw2Fixture = Clipping
-  { date     = LocalTime (fromGregorian 2014 06 08) (TimeOfDay 8 36 53)
+  { date     = LocalTime (fromGregorian 2014 06 08) (TimeOfDay 20 36 53)
   , document = Document "Stand on Zanzibar" (Just "John Brunner")
   , position = Position Nothing . Just $ Region (4607, 4607)
   , content  = Highlight "Shinka will"

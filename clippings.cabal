@@ -15,10 +15,15 @@ library
     Text.Kindle.Clippings.Reader 
     Text.Kindle.Clippings.Writer 
     Text.Kindle.Clippings.Types
+  other-modules:
+    Data.Functor.Extras,
+    Data.String.Extras,
+    Text.Parsec.Combinator.Extras
   hs-source-dirs: 
     src
   build-depends:
     base,
+    bifunctors,
     time,
     parsec,
     old-locale,

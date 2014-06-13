@@ -84,26 +84,18 @@ readDate :: Parser LocalTime
 readDate = fmap parseDate $ string "Added on " *> but "\n\r"
 
 readContent :: Parser String
-readContent = do
-  content <- manyTill anyToken $ try $ string "=========="
-  return $ chomp content
+readContent = fmap chomp . manyTill anyToken $ try eor
 
 readClipping :: Parser (Maybe Clipping)
-readClipping = do
-  title  <- readTitle
-  author <- readAuthor
-  eol
-  typ  <- readContentType
-  page <- readPageNumber
-  loc  <- readLocation
-  date <- readDate
-  eol
-  content <- readContent
-  eol
-  return $ clipping typ (Document title author) (Position page loc) date content
+readClipping = clipping
+           <$> (Document <$> readTitle <*> readAuthor <* eol)
+           <*> readContentType
+           <*> (Position <$> readPageNumber <*> readLocation)
+           <*> readDate <* eol
+           <*> readContent <* eol
 
-clipping :: String -> Document -> Position -> LocalTime -> String -> Maybe Clipping
-clipping t d p l c
+clipping :: Document -> String -> Position -> LocalTime -> String -> Maybe Clipping
+clipping d t p l c
   |(==) t "Highlight" = Just $ Clipping d p l $ Highlight c
   |(==) t "Note"      = Just $ Clipping d p l $ Annotation c
   |(==) t "Bookmark"  = Just $ Clipping d p l Bookmark

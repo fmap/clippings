@@ -5,14 +5,14 @@ module Main where
 import Prelude hiding (putStr)
 import Control.Applicative ((<$>))
 import Control.Applicative.Extras ((<$$>))
+import Data.Bifunctor (Bifunctor(bimap))
 import Data.ByteString.Lazy (ByteString)
 import Data.ByteString.Lazy.Char8 (putStr)
 import Data.Card (Card(..), ToCard(..))
 import Data.Csv.Extras (encodeTabDelimited) 
-import Data.Either.Extras (bimapEither)
 import Data.List.Extras (substitute)
 import Data.Maybe (fromMaybe, catMaybes)
-import Data.Monoid ((<>), Monoid (mempty))
+import Data.Monoid ((<>))
 import System.Environment (getArgs)
 import System.Exit (exitSuccess, exitFailure)
 import System.IO (hPutStr, stderr)
@@ -33,7 +33,7 @@ isHighlight Clipping{..} = case content of
   _           -> False
 
 getClippings :: String -> Either String [Clipping]
-getClippings = bimapEither show catMaybes 
+getClippings = bimap show catMaybes 
              . parse readClippings [] 
 
 renderClippings :: [Clipping] -> ByteString

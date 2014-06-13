@@ -26,6 +26,8 @@ library
     data-default
   default-language: 
     Haskell2010
+  ghc-options:
+    -Wall -fno-warn-orphans
 
 test-suite clippings-tests
   type:
@@ -47,6 +49,8 @@ test-suite clippings-tests
     Paths_clippings
   default-language:
     Haskell2010
+  ghc-options:
+    -Wall -fno-warn-orphans
 
 executable clippings2tsv
   main-is:
@@ -55,6 +59,7 @@ executable clippings2tsv
     examples/clippings2tsv
   build-depends:
     base == 4.*,
+    bifunctors,
     clippings,
     cassava,
     parsec,
@@ -62,3 +67,5 @@ executable clippings2tsv
     safecopy
   default-language:
     Haskell2010
+  ghc-options:
+    -Wall -fno-warn-orphans

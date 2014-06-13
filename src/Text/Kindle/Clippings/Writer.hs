@@ -3,14 +3,14 @@ module Text.Kindle.Clippings.Writer
 , showClippings
 ) where
 
+import Data.Time.Format (formatTime)
 import Data.Time.LocalTime (LocalTime)
-import Data.Time.Format (formatTime, readTime)
 import System.Locale (defaultTimeLocale)
-import Text.Kindle.Clippings.Types
+import Text.Kindle.Clippings.Types (Clipping(..), Document(..), Position(..), Content(..), Location(..))
 
 instance Show Document where
-  show (Document title (Just author)) = title ++ " (" ++ author ++ ")"
-  show (Document title (Nothing))     = title
+  show (Document t (Just a)) = t ++ " (" ++ a ++ ")"
+  show (Document t Nothing)  = t
 
 instance Show Position where
   show (Position Nothing (Just l))  = show l

@@ -1,16 +1,13 @@
-import Data.Monoid ((<>))
-import Control.Applicative  ((<$>))
-import System.FilePath (splitFileName)
-import System.Environment (getExecutablePath)
-import Text.Kindle.Clippings.Types
-import Text.Kindle.Clippings.Reader (readClipping)
-import Text.Parsec (parse)
+import Control.Monad ((<=<))
+import Data.Default (Default(def))
 import Data.Maybe (fromMaybe)
-import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Data.Time.Calendar (fromGregorian)
-import Test.Assert (runAssertions)
-import Data.Default
+import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Paths_clippings (getDataFileName)
+import Test.Assert (runAssertions)
+import Text.Kindle.Clippings.Reader (readClipping)
+import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
+import Text.Parsec (parse)
 
 fromMaybeEither :: Default b => Either a (Maybe b) -> b
 fromMaybeEither = fromMaybe def .$  either (Just . const def) id
@@ -19,7 +16,7 @@ fromMaybeEither = fromMaybe def .$  either (Just . const def) id
 (.$) = ((.) $)
 
 getClipping :: String -> Clipping
-getClipping a = fromMaybeEither $ parse readClipping "tests/Reader.hs" a
+getClipping = fromMaybeEither . parse readClipping "tests/Reader.hs"
 
 inFixture :: Clipping
 inFixture = Clipping 
@@ -29,6 +26,7 @@ inFixture = Clipping
   , content  = Highlight "Haskell is a great language for constructing code modularly from small but orthogonal building blocks."
   }
 
+inPw2Fixture :: Clipping
 inPw2Fixture = Clipping
   { date     = LocalTime (fromGregorian 2014 06 08) (TimeOfDay 8 36 53)
   , document = Document "Stand on Zanzibar" (Just "John Brunner")
@@ -44,10 +42,12 @@ getAuthor = author . document
   
 main :: IO () 
 main = do
-  clipping  <- readFile =<< getDataFileName "tests/fixtures/clipping.txt"
-  brackets  <- readFile =<< getDataFileName "tests/fixtures/brackets.txt"
-  nested    <- readFile =<< getDataFileName "tests/fixtures/nested_brackets.txt"
-  pw2       <- readFile =<< getDataFileName "tests/fixtures/pw2clipping.txt"
+  [clipping, brackets, nested, pw2] <- mapM (readFile <=< getDataFileName)
+    [ "tests/fixtures/clipping.txt"
+    , "tests/fixtures/brackets.txt"
+    , "tests/fixtures/nested_brackets.txt"
+    , "tests/fixtures/pw2clipping.txt"
+    ]
   runAssertions $ 
     [ ("Fixture should parse to sigfpe clipping.", getClipping clipping == inFixture)
     , ("Brackets in clippings' titles should be preserved." , getTitle (getClipping brackets) == "An Introduction to Statistical Learning: with Applications in R (Springer Texts in Statistics)")

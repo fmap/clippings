@@ -48,20 +48,20 @@ readPageNumber :: Parser (Maybe Int)
 readPageNumber = tryMaybe $: read $ string "on Page " *> many1 alphaNum <* string " | "
 
 readLocation :: Parser (Maybe Location)
-readLocation = tryMaybe $ string "Loc. " *> readLocation' <* but "|" <* string "| "
-
-readLocation' :: Parser Location
-readLocation' = (try readLocationRegion) <|> readLocationInt
+readLocation = tryMaybe 
+             $ (try (string "Loc. ") <|> string "Location ")
+            *> (try readLocationRegion <|> readLocationInt)
+            <* but "|" <* string "| "
 
 readLocationInt :: Parser Location
 readLocationInt = Location . read <$> many1 digit
 
-(.:) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
-(.:) = fmap fmap fmap
-
 readLocationRegion :: Parser Location
 readLocationRegion = toLocation <$> many1 digit <*> (char '-' *> many1 digit)
   where toLocation = parseRegion .: (,)
+
+(.:) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(.:) = fmap fmap fmap
 
 parseRegion :: (String, String) -> Location
 parseRegion (s0,s1) = Region . readTuple $ pad (s0,s1)

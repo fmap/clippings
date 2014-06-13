@@ -1,15 +1,14 @@
 module Text.Kindle.Clippings.Reader where
 
-import Text.Parsec hiding ((<|>), many)
-import Text.Parsec.String
+import Control.Applicative ((<$>), (<*>), (*>), (<*), (<|>), many)
 import Data.Char (isSpace)
-import Data.Time.LocalTime (LocalTime)
-import Text.Kindle.Clippings.Types 
-import Data.Default
-import Control.Applicative 
+import Data.List (find)
+import Data.Maybe (fromJust, isJust)
 import Data.Time.LocalTime (LocalTime)
 import Data.Time.Parse (strptime)
-import Data.Maybe (fromMaybe)
+import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
+import Text.Parsec (many1, digit, alphaNum, string, skipMany, oneOf, noneOf, try, char, manyTill, anyToken, optionMaybe)
+import Text.Parsec.String (Parser)
 
 eol :: Parser ()
 eol = skipMany $ oneOf "\n\r"

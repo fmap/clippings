@@ -35,6 +35,14 @@ inPw2Fixture = Clipping
   , content  = Highlight "Shinka will"
   }
 
+inPw2pdfFixture :: Clipping
+inPw2pdfFixture = Clipping
+  { date     = LocalTime (fromGregorian 2014 07 30) (TimeOfDay 14 02 57)
+  , document = Document "Tyler Cowen-Creative Destruction_ How Globalization Is Changing the World's Cultures-Princeton University Press (2002)_k2opt" (Just "")
+  , position = Position Nothing . Just $ Region (316, 316)
+  , content  = Highlight "The fundamental story about consumer taste, in modern times, is not one of dumbing down or of producers seeking to satisfy a homogeneous least common denominator at the expense of quality. Rather, the basic trend is of increasing variety and diversity, at all levels of quality, high and low"
+  }
+
 getTitle :: Clipping -> String
 getTitle = title . document
 
@@ -43,15 +51,17 @@ getAuthor = author . document
   
 main :: IO () 
 main = do
-  [clipping, brackets, nested, pw2] <- mapM (readFile <=< getDataFileName)
+  [clipping, brackets, nested, pw2, pw2pdf] <- mapM (readFile <=< getDataFileName)
     [ "tests/fixtures/clipping.txt"
     , "tests/fixtures/brackets.txt"
     , "tests/fixtures/nested_brackets.txt"
     , "tests/fixtures/pw2clipping.txt"
+    , "tests/fixtures/pw2pdfclipping.txt"
     ]
   runAssertions $ 
     [ ("Fixture should parse to sigfpe clipping.", getClipping clipping == inFixture)
     , ("Brackets in clippings' titles should be preserved." , getTitle (getClipping brackets) == "An Introduction to Statistical Learning: with Applications in R (Springer Texts in Statistics)")
     , ("Nested brackets in clippings' authors should be preserved.", getAuthor (getClipping nested) == Just "G. K. (Gilbert Keith) Chesterton")
     , ("Pw2Fixture should parse to Zanzibar clipping", getClipping pw2 == inPw2Fixture)
+    , ("Pw2pdfFixture should parse to Tyler clipping", getClipping pw2pdf == inPw2pdfFixture)
     ]

@@ -8,7 +8,7 @@ import Data.Maybe (fromJust, isJust)
 import Data.String.Extras (pad, chomp)
 import Data.Time.LocalTime (LocalTime)
 import Data.Time.Parse (strptime)
-import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
+import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Page(..),Document(..),Position(..),Content(..))
 import Text.Parsec (many1, digit, alphaNum, string, skipMany, oneOf, try, char, manyTill, anyToken)
 import Text.Parsec.String (Parser)
 import Text.Parsec.Combinator.Extras (but, tryBut1, tryMaybe, tryString)
@@ -33,9 +33,11 @@ readContentType = (tryString "- Your " <|> string "- ")
                *> but " "
                <* (tryString " on " <|> many1 (char ' '))
 
-readPageNumber :: Parser (Maybe Int)
-readPageNumber = tryMaybe $ read 
-             <$> (string "Page " *> many1 alphaNum <* string " | ")
+readPageNumber :: Parser (Maybe Page)
+readPageNumber = tryMaybe
+               $ (tryString "Page " <|> string "page ")
+              *> (try readPageRegion <|> readPageInt)
+              <* but "|" <* char '|' <* many1 (char ' ')
 
 readLocation :: Parser (Maybe Location)
 readLocation = tryMaybe 
@@ -46,14 +48,27 @@ readLocation = tryMaybe
 readLocationInt :: Parser Location
 readLocationInt = Location . read <$> many1 digit
 
+readPageInt :: Parser Page
+readPageInt = Page . read <$> many1 digit
+
 readLocationRegion :: Parser Location
 readLocationRegion = parseRegion 
                 <$$> (,) 
                  <$> many1 digit 
                  <*> (char '-' *> many1 digit)
 
+readPageRegion :: Parser Page
+readPageRegion = parsePRegion
+                <$$> (,)
+                 <$> many1 digit
+                 <*> (char '-' *> many1 digit)
+
+
 parseRegion :: (String, String) -> Location
 parseRegion = Region . bimap read read . pad
+
+parsePRegion :: (String, String) -> Page
+parsePRegion = PRegion . bimap read read . pad
 
 parseDate :: String -> LocalTime
 parseDate = fst . fromJust . fromJust {-[^1]-} . find isJust . for formats . flip strptime

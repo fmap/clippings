@@ -3,6 +3,7 @@ module Text.Kindle.Clippings.Types
 , Document (..)
 , Position (..)
 , Location (..)
+, Page     (..)
 , Content  (..)
 ) where
 
@@ -23,9 +24,16 @@ data Document = Document
   } deriving (Eq)
 
 data Position = Position
-  { page     :: Maybe Int
+  { page     :: Maybe Page
   , location :: Maybe Location -- PDFs don't get these.
   } deriving (Eq)
+
+data Page = Page Int | PRegion (Int, Int)
+
+instance Eq Page where
+  Page a   == Page b = a==b
+  PRegion a == PRegion b = a==b
+  _ == _ = False
 
 data Location = Location Int | Region (Int,Int)
 

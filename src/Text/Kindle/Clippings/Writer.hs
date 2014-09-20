@@ -6,7 +6,7 @@ module Text.Kindle.Clippings.Writer
 import Data.Time.Format (formatTime)
 import Data.Time.LocalTime (LocalTime)
 import System.Locale (defaultTimeLocale)
-import Text.Kindle.Clippings.Types (Clipping(..), Document(..), Position(..), Content(..), Location(..))
+import Text.Kindle.Clippings.Types (Clipping(..), Document(..), Position(..), Content(..), Location(..), Page(..))
 
 instance Show Document where
   show (Document t (Just a)) = t ++ " (" ++ a ++ ")"
@@ -15,13 +15,17 @@ instance Show Document where
 instance Show Position where
   show (Position Nothing (Just l))  = show l
   show (Position Nothing Nothing)   = ""
-  show (Position (Just p) (Just l)) = "on Page " ++ show p ++ " | " ++ show l
-  show (Position (Just p) Nothing)  = "on Page " ++ show p 
+  show (Position (Just p) (Just l)) = show p ++ " | " ++ show l
+  show (Position (Just p) Nothing)  = show p
 
 instance Show Content where
   show (Highlight s) = s
   show (Annotation s)  = s
   show (Bookmark) = ""
+
+instance Show Page where
+  show (Page i) = "on page " ++ show i
+  show (PRegion (p1,p2)) = "on page" ++ show p1 ++ "-" ++ show p2
 
 instance Show Location where
   show (Location i) = "Loc. " ++ show i

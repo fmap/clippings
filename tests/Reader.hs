@@ -6,7 +6,7 @@ import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Paths_clippings (getDataFileName)
 import Test.Assert (runAssertions)
 import Text.Kindle.Clippings.Reader (readClipping)
-import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
+import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Page(..),Document(..),Position(..),Content(..))
 import Text.Kindle.Clippings.Writer ()
 import Text.Parsec (parse)
 
@@ -35,11 +35,20 @@ inPw2Fixture = Clipping
   , content  = Highlight "Shinka will"
   }
 
+inPw2simplepdfFixture :: Clipping
+inPw2simplepdfFixture = Clipping
+  { date     = LocalTime (fromGregorian 2014 06 08) (TimeOfDay 20 36 53)
+  , document = Document "Stand on Zanzibar" (Just "John Brunner")
+  , position = Position (Just $ PRegion (4607, 4607)) Nothing
+  , content  = Highlight "Shinka will"
+  }
+
+
 inPw2pdfFixture :: Clipping
 inPw2pdfFixture = Clipping
-  { date     = LocalTime (fromGregorian 2014 07 30) (TimeOfDay 14 02 57)
-  , document = Document "Tyler Cowen-Creative Destruction_ How Globalization Is Changing the World's Cultures-Princeton University Press (2002)_k2opt" (Just "")
-  , position = Position Nothing . Just $ Region (316, 316)
+  { date     = LocalTime (fromGregorian 2014 07 29) (TimeOfDay 7 53 28)
+  , document = Document "Creative Destruction - How Globalization Is Changing the World's Cultures-Princeton University Press (2002)" (Just "Tyler Cowen")
+  , position = Position (Just $ PRegion (303, 303)) Nothing
   , content  = Highlight "The fundamental story about consumer taste, in modern times, is not one of dumbing down or of producers seeking to satisfy a homogeneous least common denominator at the expense of quality. Rather, the basic trend is of increasing variety and diversity, at all levels of quality, high and low"
   }
 
@@ -51,17 +60,19 @@ getAuthor = author . document
   
 main :: IO () 
 main = do
-  [clipping, brackets, nested, pw2, pw2pdf] <- mapM (readFile <=< getDataFileName)
+  [clipping, brackets, nested, pw2, pw2pdf, pw2simplepdf] <- mapM (readFile <=< getDataFileName)
     [ "tests/fixtures/clipping.txt"
     , "tests/fixtures/brackets.txt"
     , "tests/fixtures/nested_brackets.txt"
     , "tests/fixtures/pw2clipping.txt"
     , "tests/fixtures/pw2pdfclipping.txt"
+    , "tests/fixtures/pw2simplepdfclipping.txt"
     ]
   runAssertions $ 
     [ ("Fixture should parse to sigfpe clipping.", getClipping clipping == inFixture)
     , ("Brackets in clippings' titles should be preserved." , getTitle (getClipping brackets) == "An Introduction to Statistical Learning: with Applications in R (Springer Texts in Statistics)")
     , ("Nested brackets in clippings' authors should be preserved.", getAuthor (getClipping nested) == Just "G. K. (Gilbert Keith) Chesterton")
     , ("Pw2Fixture should parse to Zanzibar clipping", getClipping pw2 == inPw2Fixture)
+    , ("Pw2simpplepdfFixture should parse to Zanzibar pdf clipping", getClipping pw2simplepdf == inPw2simplepdfFixture)
     , ("Pw2pdfFixture should parse to Tyler clipping", getClipping pw2pdf == inPw2pdfFixture)
     ]

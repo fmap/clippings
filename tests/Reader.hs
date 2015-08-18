@@ -6,7 +6,7 @@ import Data.Time.LocalTime (LocalTime(..), TimeOfDay(..))
 import Paths_clippings (getDataFileName)
 import Test.Assert (runAssertions)
 import Text.Kindle.Clippings.Reader (readClipping)
-import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
+import Text.Kindle.Clippings.Types (Clipping(..),Interval(..),Document(..),Position(..),Content(..))
 import Text.Kindle.Clippings.Writer ()
 import Text.Parsec (parse)
 
@@ -23,7 +23,7 @@ inFixture :: Clipping
 inFixture = Clipping 
   { date     = LocalTime (fromGregorian 2013 06 10) (TimeOfDay 6 58 17)
   , document = Document "Haskell Monoids and their Uses" (Just "sigfpe")
-  , position = Position Nothing . Just $ Region (3,4)
+  , position = Position Nothing . Just $ Proper 3 4
   , content  = Highlight "Haskell is a great language for constructing code modularly from small but orthogonal building blocks."
   }
 
@@ -31,7 +31,7 @@ inPw2Fixture :: Clipping
 inPw2Fixture = Clipping
   { date     = LocalTime (fromGregorian 2014 06 08) (TimeOfDay 20 36 53)
   , document = Document "Stand on Zanzibar" (Just "John Brunner")
-  , position = Position Nothing . Just $ Region (4607, 4607)
+  , position = Position Nothing . Just $ Proper 4607 4607
   , content  = Highlight "Shinka will"
   }
 
@@ -39,7 +39,7 @@ inPw2pdfFixture :: Clipping
 inPw2pdfFixture = Clipping
   { date     = LocalTime (fromGregorian 2014 07 29) (TimeOfDay 07 53 28)
   , document = Document "Tyler Cowen-Creative Destruction_ How Globalization Is Changing the World's Cultures-Princeton University Press (2002)_k2opt" Nothing
-  , position = Position (Just (303, Just 303)) Nothing
+  , position = Position (Just $ Proper 303 303) Nothing
   , content  = Highlight "The fundamental story about consumer taste, in modern times, is not one of dumbing down or of producers seeking to satisfy a homogeneous least common denominator at the expense of quality. Rather, the basic trend is of increasing variety and diversity, at all levels of quality, high and low"
   }
 

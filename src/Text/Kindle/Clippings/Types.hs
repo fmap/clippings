@@ -2,7 +2,7 @@ module Text.Kindle.Clippings.Types
 ( Clipping (..)
 , Document (..)
 , Position (..)
-, Location (..)
+, Interval (..)
 , Content  (..)
 ) where
 
@@ -22,17 +22,12 @@ data Document = Document
   , author :: Maybe String -- Not always present, e.g. "Oxford Dictionary of English\n".
   } deriving (Eq)
 
+data Interval = Singleton Int | Proper Int Int deriving (Eq)
+
 data Position = Position
-  { page     :: Maybe (Int, Maybe Int) -- Page ranges have been observed with recent models.
-  , location :: Maybe Location -- PDFs don't get these.
+  { page     :: Maybe Interval
+  , location :: Maybe Interval
   } deriving (Eq)
-
-data Location = Location Int | Region (Int,Int)
-
-instance Eq Location where
-  Location a == Location b = a==b
-  Region a   == Region b = a==b
-  _ ==  _ = False
 
 data Content = Bookmark | Highlight String | Annotation String
 

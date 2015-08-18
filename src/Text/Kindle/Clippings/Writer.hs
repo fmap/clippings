@@ -6,27 +6,26 @@ module Text.Kindle.Clippings.Writer
 import Data.Time.Format (formatTime)
 import Data.Time.LocalTime (LocalTime)
 import System.Locale (defaultTimeLocale)
-import Text.Kindle.Clippings.Types (Clipping(..), Document(..), Position(..), Content(..), Location(..))
+import Text.Kindle.Clippings.Types (Clipping(..), Document(..), Position(..), Content(..), Interval(..))
 
 instance Show Document where
   show (Document t (Just a)) = t ++ " (" ++ a ++ ")"
   show (Document t Nothing)  = t
 
+instance Show Interval where
+  show (Singleton i) = show i
+  show (Proper i0 i1) = show i0 ++ "-" ++ show i1
+
 instance Show Position where
-  show (Position Nothing (Just l))  = show l
-  show (Position Nothing Nothing)   = ""
-  show (Position (Just p) (Just l)) = show (Position (Just p) Nothing) ++ " | " ++ show l
-  show (Position (Just (p, Nothing)) Nothing)  = "on Page " ++ show p
-  show (Position (Just (p, Just q)) Nothing)  = show (Position (Just (p, Nothing)) Nothing) ++ "-" ++ show q
+  show (Position Nothing (Just l)) = "Loc. " ++ show l
+  show (Position (Just p) Nothing) = "on Page " ++ show p
+  show (Position p@(Just _) l@(Just _)) = show (Position p Nothing) ++ " | " ++ show (Position Nothing l)
+  show (Position Nothing Nothing) = ""
 
 instance Show Content where
   show (Highlight s) = s
   show (Annotation s)  = s
   show (Bookmark) = ""
-
-instance Show Location where
-  show (Location i) = "Loc. " ++ show i
-  show (Region (l1,l2)) = "Loc. " ++ show l1 ++ "-" ++ show l2
 
 showContentType :: Content -> String
 showContentType (Highlight _) = "Highlight"

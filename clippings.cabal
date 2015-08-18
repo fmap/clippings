@@ -21,19 +21,17 @@ library
     Text.Kindle.Clippings.Writer 
     Text.Kindle.Clippings.Types
   other-modules:
-    Data.Functor.Extras,
-    Data.String.Extras,
     Text.Parsec.Combinator.Extras
   hs-source-dirs: 
     src
   build-depends:
     base,
-    bifunctors,
     time,
     parsec,
     old-locale,
     strptime,
-    data-default
+    data-default,
+    functor-infix
   default-language: 
     Haskell2010
   ghc-options:

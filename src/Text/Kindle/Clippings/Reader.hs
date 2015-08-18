@@ -11,7 +11,7 @@ import Data.Time.Parse (strptime)
 import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
 import Text.Parsec (many1, digit, alphaNum, string, skipMany, oneOf, try, char, manyTill, anyToken)
 import Text.Parsec.String (Parser)
-import Text.Parsec.Combinator.Extras (but, tryBut1, tryMaybe, tryString)
+import Text.Parsec.Combinator.Extras (but, tryBut1, tryMaybe, tryString, stringCI)
 
 eol :: Parser ()
 eol = skipMany $ oneOf "\n\r"
@@ -31,7 +31,7 @@ readAuthor = tryMaybe $ init
 readContentType :: Parser String
 readContentType = (tryString "- Your " <|> string "- ")
                *> but " "
-               <* (tryString " on " <|> many1 (char ' '))
+               <* (tryString " on " <|> tryString " at " <|> many1 (char ' '))
 
 readPageNumber :: Parser (Maybe Int)
 readPageNumber = tryMaybe $ read 
@@ -39,7 +39,7 @@ readPageNumber = tryMaybe $ read
 
 readLocation :: Parser (Maybe Location)
 readLocation = tryMaybe 
-             $ (tryString "Loc. " <|> string "Location ")
+             $ (tryString "Loc. " <|> stringCI "Location ")
             *> (try readLocationRegion <|> readLocationInt)
             <* but "|" <* char '|' <* many1 (char ' ')
 

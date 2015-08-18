@@ -2,11 +2,14 @@ module Text.Parsec.Combinator.Extras (
   but,
   tryBut1,
   tryMaybe,
-  tryString
+  tryString,
+  stringCI
 ) where
 
+import Control.Applicative ((<|>))
+import Data.Char (toLower, toUpper)
 import Text.Parsec.String (Parser)
-import Text.Parsec (many, many1, noneOf, try, optionMaybe, string)
+import Text.Parsec (many, many1, noneOf, try, optionMaybe, string, char)
 
 but :: String -> Parser String
 but = many . noneOf
@@ -19,3 +22,6 @@ tryMaybe = optionMaybe . try
 
 tryString :: String -> Parser String
 tryString = try . string
+
+stringCI :: String -> Parser String
+stringCI = mapM (\c -> char (toUpper c) <|> char (toLower c))

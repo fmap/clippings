@@ -15,8 +15,9 @@ instance Show Document where
 instance Show Position where
   show (Position Nothing (Just l))  = show l
   show (Position Nothing Nothing)   = ""
-  show (Position (Just p) (Just l)) = "on Page " ++ show p ++ " | " ++ show l
-  show (Position (Just p) Nothing)  = "on Page " ++ show p 
+  show (Position (Just p) (Just l)) = show (Position (Just p) Nothing) ++ " | " ++ show l
+  show (Position (Just (p, Nothing)) Nothing)  = "on Page " ++ show p
+  show (Position (Just (p, Just q)) Nothing)  = show (Position (Just (p, Nothing)) Nothing) ++ "-" ++ show q
 
 instance Show Content where
   show (Highlight s) = s

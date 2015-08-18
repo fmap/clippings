@@ -9,7 +9,7 @@ import Data.String.Extras (pad, chomp)
 import Data.Time.LocalTime (LocalTime)
 import Data.Time.Parse (strptime)
 import Text.Kindle.Clippings.Types (Clipping(..),Location(..),Document(..),Position(..),Content(..))
-import Text.Parsec (many1, digit, alphaNum, string, skipMany, oneOf, try, char, manyTill, anyToken)
+import Text.Parsec (many1, digit, alphaNum, string, skipMany, oneOf, try, char, manyTill, anyToken, optionMaybe)
 import Text.Parsec.String (Parser)
 import Text.Parsec.Combinator.Extras (but, tryBut1, tryMaybe, tryString, stringCI)
 
@@ -18,6 +18,13 @@ eol = skipMany $ oneOf "\n\r"
 
 eor :: Parser String
 eor = string "=========="
+
+readDocument :: Parser Document
+readDocument = do
+  result@(Document t a) <- Document <$> readTitle <*> readAuthor
+  return $ if fmap last a == Just ' '
+    then Document (t ++ " (" ++ init (fromJust a)) Nothing
+    else result
 
 readTitle :: Parser String
 readTitle = chomp . concat <$> textAndBrackets
@@ -33,9 +40,12 @@ readContentType = (tryString "- Your " <|> string "- ")
                *> but " "
                <* (tryString " on " <|> tryString " at " <|> many1 (char ' '))
 
-readPageNumber :: Parser (Maybe Int)
-readPageNumber = tryMaybe $ read 
-             <$> (string "Page " *> many1 alphaNum <* string " | ")
+readPageNumber :: Parser (Maybe (Int, Maybe Int))
+readPageNumber = optionMaybe . try $ do
+  left <- stringCI "Page " *> many1 alphaNum
+  right <- optionMaybe . try $ string "-" *> many1 alphaNum
+  _  <- string " | "
+  return (read left, fmap read right)
 
 readLocation :: Parser (Maybe Location)
 readLocation = tryMaybe 
@@ -72,7 +82,7 @@ readContent = chomp <$> manyTill anyToken (try eor)
 
 readClipping :: Parser (Maybe Clipping)
 readClipping = clipping
-           <$> (Document <$> readTitle <*> readAuthor <* eol)
+           <$> (readDocument <* eol)
            <*> readContentType
            <*> (Position <$> readPageNumber <*> readLocation)
            <*> readDate <* eol

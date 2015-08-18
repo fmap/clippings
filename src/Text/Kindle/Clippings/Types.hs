@@ -23,7 +23,7 @@ data Document = Document
   } deriving (Eq)
 
 data Position = Position
-  { page     :: Maybe Int
+  { page     :: Maybe (Int, Maybe Int) -- Page ranges have been observed with recent models.
   , location :: Maybe Location -- PDFs don't get these.
   } deriving (Eq)
 

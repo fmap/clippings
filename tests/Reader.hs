@@ -37,9 +37,9 @@ inPw2Fixture = Clipping
 
 inPw2pdfFixture :: Clipping
 inPw2pdfFixture = Clipping
-  { date     = LocalTime (fromGregorian 2014 07 30) (TimeOfDay 14 02 57)
-  , document = Document "Tyler Cowen-Creative Destruction_ How Globalization Is Changing the World's Cultures-Princeton University Press (2002)_k2opt" (Just "")
-  , position = Position Nothing . Just $ Region (316, 316)
+  { date     = LocalTime (fromGregorian 2014 07 29) (TimeOfDay 07 53 28)
+  , document = Document "Tyler Cowen-Creative Destruction_ How Globalization Is Changing the World's Cultures-Princeton University Press (2002)_k2opt" Nothing
+  , position = Position (Just (303, Just 303)) Nothing
   , content  = Highlight "The fundamental story about consumer taste, in modern times, is not one of dumbing down or of producers seeking to satisfy a homogeneous least common denominator at the expense of quality. Rather, the basic trend is of increasing variety and diversity, at all levels of quality, high and low"
   }
 

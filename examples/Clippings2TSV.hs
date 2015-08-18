@@ -4,13 +4,12 @@ module Main where
 
 import Prelude hiding (putStr)
 import Control.Applicative ((<$>))
-import Control.Applicative.Extras ((<$$>))
 import Data.Bifunctor (Bifunctor(bimap))
 import Data.ByteString.Lazy (ByteString)
 import Data.ByteString.Lazy.Char8 (putStr)
-import Data.Card (Card(..), ToCard(..))
-import Data.Csv.Extras (encodeTabDelimited) 
-import Data.List.Extras (substitute)
+import Data.Char (ord)
+import Data.Csv (ToRecord(..), EncodeOptions(..), encodeWith, defaultEncodeOptions, toField, record)
+import Data.Functor.Infix ((<$$>))
 import Data.Maybe (fromMaybe, catMaybes)
 import Data.Monoid ((<>))
 import System.Environment (getArgs)
@@ -19,13 +18,21 @@ import System.IO (hPutStr, stderr)
 import Text.Kindle.Clippings (Clipping(..), Document(..), Content(..), readClippings)
 import Text.Parsec (parse)
 
+data Card = Card { question :: String, answer :: String }
+
+instance ToRecord Card where
+  toRecord (Card q a) = record $ map toField [q,a]
+
+class ToCard a where
+  toCard :: a -> Maybe Card
+
 instance ToCard Clipping where
   toCard c@Clipping{..} 
     | not (isHighlight c) = Nothing
     | null (show content) = Nothing
     | otherwise = Just $ Card content' author'
     where author'  = fromMaybe "[clippings2tsv]" $ (" - " <>) <$> author document
-          content' = substitute '\n' ' ' $ show content
+          content' = \case { '\n' -> ' '; chr -> chr; } <$> show content
 
 isHighlight :: Clipping -> Bool
 isHighlight Clipping{..} = case content of
@@ -35,6 +42,10 @@ isHighlight Clipping{..} = case content of
 getClippings :: String -> Either String [Clipping]
 getClippings = bimap show catMaybes 
              . parse readClippings [] 
+
+encodeTabDelimited :: ToRecord a => [a] -> ByteString
+encodeTabDelimited = encodeWith $ defaultEncodeOptions
+  { encDelimiter = fromIntegral $ ord '\t' }
 
 renderClippings :: [Clipping] -> ByteString
 renderClippings = encodeTabDelimited . catMaybes . fmap toCard
